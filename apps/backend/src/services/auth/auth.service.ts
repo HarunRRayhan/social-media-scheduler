@@ -55,6 +55,8 @@ export class AuthService {
         // FORK: a valid signed invite for this exact email can register even when registration is disabled
         const invited =
           typeof addToOrg === 'object' &&
+          !!addToOrg.orgId &&
+          !!addToOrg.id &&
           !!addToOrg.email &&
           addToOrg.email.toLowerCase() === body.email;
         if (!invited && !(await this.canRegister(provider))) {

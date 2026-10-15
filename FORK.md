@@ -6,5 +6,6 @@ This fork of [gitroomhq/postiz-app](https://github.com/gitroomhq/postiz-app) dep
 |---|---|
 | No Google/Apple/Farcaster/wallet sign-in buttons | `apps/frontend/src/components/auth/login.tsx`, `register.tsx` |
 | Invite-only signup: with `DISABLE_REGISTRATION=true`, a signed invite for the same email can still register | `apps/backend/src/services/auth/auth.service.ts`, `apps/frontend/src/app/(app)/auth/page.tsx` |
+| Logout always shown in Settings (upstream hides it during `?onboarding`) | `apps/frontend/src/components/layout/settings.component.tsx` |
 
 Deploy notes: Railway builds `Dockerfile.dev` (`RAILWAY_DOCKERFILE_PATH`), `DISABLE_REGISTRATION=true`.

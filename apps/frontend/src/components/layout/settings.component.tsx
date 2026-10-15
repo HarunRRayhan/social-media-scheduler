@@ -55,7 +55,8 @@ export const SettingsPopup: FC<{
     return modal.closeAll();
   }, []);
   const url = useSearchParams();
-  const showLogout = !url.get('onboarding') || user?.tier?.current === 'FREE';
+  // FORK: always show logout (upstream hides it while ?onboarding is in the URL)
+  const showLogout = true;
   const loadProfile = useCallback(async () => {
     const personal = await (await fetch('/user/personal')).json();
     form.setValue('fullname', personal.name || '');
