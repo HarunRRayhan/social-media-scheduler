@@ -10,7 +10,6 @@ import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { LoginUserDto } from '@gitroom/nestjs-libraries/dtos/auth/login.user.dto';
 import { GithubProvider } from '@gitroom/frontend/components/auth/providers/github.provider';
 import { OauthProvider } from '@gitroom/frontend/components/auth/providers/oauth.provider';
-import { GoogleProvider } from '@gitroom/frontend/components/auth/providers/google.provider';
 import { AppleProvider } from '@gitroom/frontend/components/auth/providers/apple.provider';
 import { useVariables } from '@gitroom/react/helpers/variable.context';
 import { FarcasterProvider } from '@gitroom/frontend/components/auth/providers/farcaster.provider';
@@ -33,6 +32,8 @@ export function Login() {
     billingEnabled,
     genericOauth,
   } = useVariables();
+  // FORK: no Google/Apple/Farcaster/wallet sign-in; only show the social block when OIDC or GitHub mode is on
+  const showSocial = !isGeneral || !!genericOauth;
   const resolver = useMemo(() => {
     return classValidatorResolver(LoginUserDto);
   }, []);
@@ -75,22 +76,18 @@ export function Login() {
               {t('sign_in', 'Sign In')}
             </h1>
           </div>
-          <div className="text-[14px] mt-[32px] mb-[12px]">
-            {t('continue_with', 'Continue With')}
-          </div>
+          {showSocial && (
+            <div className="text-[14px] mt-[32px] mb-[12px]">
+              {t('continue_with', 'Continue With')}
+            </div>
+          )}
           <div className="flex flex-col">
             {isGeneral && genericOauth ? (
               <OauthProvider />
             ) : !isGeneral ? (
               <GithubProvider />
-            ) : (
-              <div className="gap-[8px] flex">
-                <GoogleProvider />
-                {!!appleClientId && <AppleProvider />}
-                {!!neynarClientId && <FarcasterProvider />}
-                {billingEnabled && <WalletProvider />}
-              </div>
-            )}
+            ) : null}
+            {showSocial && (
             <div className="h-[20px] mb-[24px] mt-[24px] relative">
               <div className="absolute w-full h-[1px] bg-fifth top-[50%] -translate-y-[50%]" />
               <div
@@ -99,6 +96,7 @@ export function Login() {
                 <div className="px-[16px]">{t('or', 'or')}</div>
               </div>
             </div>
+            )}
             <div className="flex flex-col gap-[12px]">
               <div className="text-textColor">
                 <Input
