@@ -35,7 +35,9 @@ export class AuthService {
     body: CreateOrgUserDto | LoginUserDto,
     ip: string,
     userAgent: string,
-    addToOrg?: boolean | { orgId: string; role: 'USER' | 'ADMIN'; id: string }
+    addToOrg?:
+      | boolean
+      | { orgId: string; role: 'USER' | 'ADMIN'; id: string; email?: string }
   ) {
     if (provider === Provider.LOCAL) {
       if (process.env.DISALLOW_PLUS && body.email.includes('+')) {
@@ -50,7 +52,12 @@ export class AuthService {
           throw new Error('Email already exists');
         }
 
-        if (!(await this.canRegister(provider))) {
+        // FORK: a valid signed invite for this exact email can register even when registration is disabled
+        const invited =
+          typeof addToOrg === 'object' &&
+          !!addToOrg.email &&
+          addToOrg.email.toLowerCase() === body.email;
+        if (!invited && !(await this.canRegister(provider))) {
           throw new Error('Registration is disabled');
         }
 
